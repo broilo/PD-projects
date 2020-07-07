@@ -11,7 +11,7 @@ c Gera St e Rh
 c
 c Obs1: Utiliza os novos conjuntos de dados do LHC
 c
-c Obs2: TOTEM
+c Obs2: TOTEM + ATLAS
 c
 c Obs3: Usa uma parametrização para SigQCD com 10 parâmetros livres
 c
@@ -53,12 +53,12 @@ const int numpar = 7;
 const int npRap=12;
 const int npRpp=52;
 const int npSap=30;
-const int npSpp=77;
+const int npSpp=80;
 const int npapfit=npRap+npSap;
 const int nppfit=npRpp+npSpp;
 const int npMin=npapfit+nppfit;
 // Plots
-const int npSppPlot=77;
+const int npSppPlot=80;
 const int npRppPlot=52;
 /********************************************************************************/
 //parameters to control energy and b range (for plots and integrations)
@@ -287,7 +287,7 @@ double KerForward(double *x,double *par)
     /*******************************************************/
     double ReChiEvenSH=0.5*Kf*(ReWSh*resig-ImWSh*imsig);
     /*******************************************************/
-    double ReChiEvenSoft=0.5*WEvS*(A+(B*Cos(PiOver4())/Sqrt(s/s0))+C*Power(s/s0,Delta)*Cos(Delta*PiOver2()));      
+    double ReChiEvenSoft=0.5*WEvS*(A+(B*Cos(PiOver4())/Sqrt(s/s0))+C*Power(s/s0,Delta)*Cos(Delta*PiOver2()));    
     /*******************************************************/
     double ReChiOddSoft=0.5*WOddS*D*Cos(PiOver4())/Sqrt(s/s0);     
     /*******************************************************/
@@ -346,7 +346,7 @@ void PlotTotXSec(double *Wcm,double *sigtotPPCT14,double *sigtotPBARPCT14,int np
     FILE *aq1,*aq2;
 // Plotting St data     
     aq1 = fopen("paw_Stpa.dat","r");
-    aq2 = fopen("paw_StppT.dat","r");
+    aq2 = fopen("paw_StppTA.dat","r");
 
     // pbp
     const int npdpa = npSap;
@@ -460,7 +460,7 @@ void PlotTotXSec(double *Wcm,double *sigtotPPCT14,double *sigtotPBARPCT14,int np
     grSigPP_CT14->Draw("csame"); 
     grSigPBARP_CT14->Draw("csame");
       
-      canv1->SaveAs("St_DGM19cCT14cut13_sATLAS.eps");    
+      canv1->SaveAs("St_DGM19cCT14cut13.eps");    
 //       canv1->Clear();
 }
 /*******************************************************************************/
@@ -566,7 +566,7 @@ void PlotRho(double *Wcm,double *rhoPPCT14,double *rhoPBARPCT14,int npfit)
     grRhoPP_CT14->Draw("csame");
     grRhoPBARP_CT14->Draw("csame");
            
-      canv2->SaveAs("Rh_DGM19cCT14cut13_sATLAS.eps");      
+      canv2->SaveAs("Rh_DGM19cCT14cut13.eps");      
       canv2->Clear();
 }
 /***********************************************************************************************************/
@@ -580,7 +580,7 @@ void fcn(int &npar, double *gin, double &f, double *par, int iflag)
     double C=par[3];
     double D=par[4];
     double nu1=par[5];
-    double nu2=par[6]; 
+    double nu2=par[6];
     double Delta=0.12;        
     /*******************************************************/
     //reading data, then fitting
@@ -592,7 +592,7 @@ void fcn(int &npar, double *gin, double &f, double *par, int iflag)
  
     // pbp   
     aq1 = fopen("paw_Stpa.dat","r");
-    aq2 = fopen("paw_StppT.dat","r");
+    aq2 = fopen("paw_StppTA.dat","r");
 
     const int npdpa = npSap;
     double Wpap[npdpa],SigExpPaP[npdpa],uWpap[npdpa],uSigExpPaP[npdpa];
@@ -635,7 +635,7 @@ void fcn(int &npar, double *gin, double &f, double *par, int iflag)
     /*******************************************************/
     //Total XSection - pp
        
-    TF1 SigTotPP("SigTotPP",KerForward,bmin,bmax,11); //este 10 significa o número máximo de parâmetros 
+    TF1 SigTotPP("SigTotPP",KerForward,bmin,bmax,11); //este 11 significa o número máximo de parâmetros 
     SigTotPP.SetParameter(0,muevsoft);
     SigTotPP.SetParameter(1,A);
     SigTotPP.SetParameter(2,B);
@@ -749,7 +749,7 @@ void fcn(int &npar, double *gin, double &f, double *par, int iflag)
 }
 /***********************************************************************************************************/
 
-void DGM19cCT14cut13_sATLAS()
+void DGM19cCT14cut13()
 {
     /******************************************/
     //time control - start
@@ -840,11 +840,11 @@ void DGM19cCT14cut13_sATLAS()
     double D=outpar[4];
     double nu1=outpar[5];
     double nu2=outpar[6];
-    double Delta=0.12;         
+    double Delta=0.12;       
     /*******************************************************/
     //Total XSection - pp
        
-    TF1 SigTotPP("SigTotPP",KerForward,bmin,bmax,11); //este 10 significa o número máximo de parâmetros 
+    TF1 SigTotPP("SigTotPP",KerForward,bmin,bmax,11); //este 11 significa o número máximo de parâmetros 
     SigTotPP.SetParameter(0,muevsoft);
     SigTotPP.SetParameter(1,A);
     SigTotPP.SetParameter(2,B);
@@ -897,15 +897,15 @@ void DGM19cCT14cut13_sATLAS()
     RhoPBARP.SetParameter(6,nu2);
     RhoPBARP.SetParameter(7,Delta);
     RhoPBARP.SetParameter(8,2);
-    RhoPBARP.SetParameter(9,2);   
-    /*************************************************************************************************/
+    RhoPBARP.SetParameter(9,2);      
+/*************************************************************************************************/
    //calculates total xsection and rho, creating files to make the plots
     FILE *aq1,*aq2,*aq3,*aq4;
    
-    aq1=fopen("Stpp_DGM19cCT14cut13_sATLAS.dat","w"); 
-    aq2=fopen("Rhpp_DGM19cCT14cut13_sATLAS.dat","w"); 
-    aq3=fopen("Stpa_DGM19cCT14cut13_sATLAS.dat","w"); 
-    aq4=fopen("Rhpa_DGM19cCT14cut13_sATLAS.dat","w");  
+    aq1=fopen("Stpp_DGM19cCT14cut13.dat","w"); 
+    aq2=fopen("Rhpp_DGM19cCT14cut13.dat","w"); 
+    aq3=fopen("Stpa_DGM19cCT14cut13.dat","w"); 
+    aq4=fopen("Rhpa_DGM19cCT14cut13.dat","w");  
        
      //number of directive computing for GaussLegendreIntegration
     int np = 50;
@@ -950,10 +950,10 @@ void DGM19cCT14cut13_sATLAS()
       fclose(aq3);
       fclose(aq4);  
        
-      aq1 = fopen("Stpp_DGM19cCT14cut13_sATLAS.dat","r");
-      aq2 = fopen("Rhpp_DGM19cCT14cut13_sATLAS.dat","r");
-      aq3 = fopen("Stpa_DGM19cCT14cut13_sATLAS.dat","r");
-      aq4 = fopen("Rhpa_DGM19cCT14cut13_sATLAS.dat","r");
+      aq1 = fopen("Stpp_DGM19cCT14cut13.dat","r");
+      aq2 = fopen("Rhpp_DGM19cCT14cut13.dat","r");
+      aq3 = fopen("Stpa_DGM19cCT14cut13.dat","r");
+      aq4 = fopen("Rhpa_DGM19cCT14cut13.dat","r");
       
       const int npfit=108;
       double Wcm[npfit],sigtotPPCT14[npfit],rhoPPCT14[npfit],sigtotPBARPCT14[npfit],rhoPBARPCT14[npfit];       

@@ -1,7 +1,7 @@
 /*
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c
-c O FATOR DE FORMA ESTÁ SENDO CONSIDERADO NA RDD!!!
+c O FATOR DE FORMA ESTÁ SENDO CONSIDERADO NA RDD, MAS nu2=0 !!!
 c
 c ImXsh é obtida via s->-is
 c
@@ -11,11 +11,11 @@ c Gera St e Rh
 c
 c Obs1: Utiliza os novos conjuntos de dados do LHC
 c
-c Obs2: TOTEM
+c Obs2: TOTEM + ATLAS
 c
 c Obs3: Usa uma parametrização para SigQCD com 10 parâmetros livres
 c
-c Obs4: PDF: CT14lo
+c Obs4: PDF: MMHTlo
 c
 c Obs5: Usa a estrutura do Durand & Pi
 c
@@ -49,16 +49,16 @@ const double muoddsoft=0.5;
 const double Kf=1.; 
 /********************************************************************************/
 //number of fit parameters and data points 
-const int numpar = 7;
+const int numpar = 6;
 const int npRap=12;
 const int npRpp=52;
 const int npSap=30;
-const int npSpp=77;
+const int npSpp=80;
 const int npapfit=npRap+npSap;
 const int nppfit=npRpp+npSpp;
 const int npMin=npapfit+nppfit;
 // Plots
-const int npSppPlot=77;
+const int npSppPlot=80;
 const int npRppPlot=52;
 /********************************************************************************/
 //parameters to control energy and b range (for plots and integrations)
@@ -67,18 +67,18 @@ const double Wmax=1.e6;
 const double bmin=0.;
 const double bmax=30.;   
 /*******************************************************************************/
-//QCD cross section - Mateus' analytical parametrization for CT14LO PDF
+//QCD cross section - Mateus' analytical parametrization for MMHTLO PDF
 /*******************************************************************************/
-const double b1=100.22;
-const double b2=0.43425e-1;
-const double b3=1.2736;
-const double b4=1.9189;
-const double b5=0.12198e-7;
-const double b6=14.050;
-const double b7=0.50348;
-const double b8=3699.4;
-const double b9=-80.280;
-const double b10=-2.6318;    
+const double b1=95.284;
+const double b2=0.37224;
+const double b3=0.59990;
+const double b4=2.4959;
+const double b5=-0.25543e-5;
+const double b6=14.281;
+const double b7=0.28071;
+const double b8=0.90856e-1;
+const double b9=4.2904;
+const double b10=0.67342;  
 const double c1=1.01;
 const double c2=1.05;
 const double c3=1.09;  
@@ -129,117 +129,16 @@ double ImSigQCD(double W)
 /*******************************************************************************/
 //Form factors
 /*******************************************************************************/
-/*
-Complex K3(x)
-*/
-//
-// -> Real K3(x)
-//
-double ReK3(double *x,double *par)
-{
-     double b=x[0];
-     double W=par[0];
-     double nu1=par[1];
-     double nu2=par[2];
-
-     TComplex s=-TComplex::I()*W*W;
-     TComplex Y=TComplex::Log(s/s0);
-     TComplex mush=nu1-nu2*Y;
-     
-     double A=(mush.Re())*b;
-     double B=(mush.Im())*b;
-     
-     const double tmin=0.;
-     const double tmax=10.;
-     
-     TF1 WF_RE("WF_RE","TMath::Exp(-[0]*TMath::CosH(x))*TMath::Cos([1]*TMath::CosH(x))*TMath::CosH(3.*x)",tmin,tmax);
-     WF_RE.SetParameter(0,A);
-     WF_RE.SetParameter(1,B);   
-     
-     ROOT::Math::WrappedTF1 wf1(WF_RE);
-   // Create the Integrator
-     ROOT::Math::GSLIntegrator ig(ROOT::Math::IntegrationOneDim::kADAPTIVE);// GSL Adaptive 
-     ig.SetFunction(wf1);
-     ig.SetRelTolerance(1e-5);    
-     
-     return ig.Integral(tmin,tmax);
-}
-//
-// -> Imaginary K3(x)
-//
-double ImK3(double *x,double *par)
-{
-     double b=x[0];
-     double W=par[0];
-     double nu1=par[1];
-     double nu2=par[2];
-
-     TComplex s=-TComplex::I()*W*W;
-     TComplex Y=TComplex::Log(s/s0);
-     TComplex mush=nu1-nu2*Y;
-     
-     double A=(mush.Re())*b;
-     double B=(mush.Im())*b;
-     
-     const double tmin=0.;
-     const double tmax=10.;
-     
-     TF1 WF_RE("WF_RE","-TMath::Exp(-[0]*TMath::CosH(x))*TMath::Sin([1]*TMath::CosH(x))*TMath::CosH(3.*x)",tmin,tmax);
-     WF_RE.SetParameter(0,A);
-     WF_RE.SetParameter(1,B);   
-     
-     ROOT::Math::WrappedTF1 wf1(WF_RE);
-   // Create the Integrator
-     ROOT::Math::GSLIntegrator ig(ROOT::Math::IntegrationOneDim::kADAPTIVE);// GSL Adaptive 
-     ig.SetFunction(wf1);
-     ig.SetRelTolerance(1e-5);    
-     
-     return ig.Integral(tmin,tmax); 
-}
 //semi-hard
-double ReWSH(double b,double W,double nu1,double nu2)
+double WSH(double b,double W,double nu1,double nu2)
 {    
-    TComplex s=-TComplex::I()*W*W;
-    TComplex Y=TComplex::Log(s/s0);
-    TComplex mush=nu1-nu2*Y;
+    double s=W*W;
+    double Y=Log(s/s0);
+    double mush=nu1-nu2*Y;
     
-    TF1 RealK3("RealK3",ReK3,bmin,bmax,3);
-    RealK3.SetParameter(0,W);
-    RealK3.SetParameter(1,nu1);
-    RealK3.SetParameter(2,nu2);
+    double ws=Power(mush,5)*Power(b,3)*BesselK3(mush*b)/(96.*Pi());  
     
-    TF1 ImagK3("ImagK3",ImK3,bmin,bmax,3);
-    ImagK3.SetParameter(0,W);
-    ImagK3.SetParameter(1,nu1);
-    ImagK3.SetParameter(2,nu2);    
-    
-    TComplex K3Complex = RealK3.Eval(b)+TComplex::I()*ImagK3.Eval(b);    
-    
-    TComplex ws=TComplex::Power(mush,5)*Power(b,3)*K3Complex/(96.*Pi());  
-    
-    return ws.Re();    
-}
-double ImWSH(double b,double W,double nu1,double nu2)
-{    
-    TComplex s=-TComplex::I()*W*W;
-    TComplex Y=TComplex::Log(s/s0);
-    TComplex mush=nu1-nu2*Y;
-    
-    TF1 RealK3("RealK3",ReK3,bmin,bmax,3);
-    RealK3.SetParameter(0,W);
-    RealK3.SetParameter(1,nu1);
-    RealK3.SetParameter(2,nu2);
-    
-    TF1 ImagK3("ImagK3",ImK3,bmin,bmax,3);
-    ImagK3.SetParameter(0,W);
-    ImagK3.SetParameter(1,nu1);
-    ImagK3.SetParameter(2,nu2);    
-    
-    TComplex K3Complex = RealK3.Eval(b)+TComplex::I()*ImagK3.Eval(b);    
-    
-    TComplex ws=TComplex::Power(mush,5)*Power(b,3)*K3Complex/(96.*Pi());  
-    
-    return ws.Im();   
+    return ws;    
 }
 //soft
 double WSoft(double b,double musoft)
@@ -273,10 +172,9 @@ double KerForward(double *x,double *par)
     /*******************************************************/
     //Form factors
     /*******************************************************/
-    double ReWSh=ReWSH(b,W,nu1,nu2);
-    double ImWSh=ImWSH(b,W,nu1,nu2);
+    double WSh=WSH(b,W,nu1,nu2);
     double WEvS=WSoft(b,muevsoft); 
-    double WOddS=WSoft(b,muoddsoft); 
+    double WOddS=WSoft(b,muoddsoft);  
     /*******************************************************/
     //SigQCD
     /*******************************************************/
@@ -285,9 +183,9 @@ double KerForward(double *x,double *par)
     /*******************************************************/
     //Eikonal - real part
     /*******************************************************/
-    double ReChiEvenSH=0.5*Kf*(ReWSh*resig-ImWSh*imsig);
+    double ReChiEvenSH=0.5*Kf*WSh*resig; 
     /*******************************************************/
-    double ReChiEvenSoft=0.5*WEvS*(A+(B*Cos(PiOver4())/Sqrt(s/s0))+C*Power(s/s0,Delta)*Cos(Delta*PiOver2()));      
+    double ReChiEvenSoft=0.5*WEvS*(A+(B*Cos(PiOver4())/Sqrt(s/s0))+C*Power(s/s0,Delta)*Cos(Delta*PiOver2()));     
     /*******************************************************/
     double ReChiOddSoft=0.5*WOddS*D*Cos(PiOver4())/Sqrt(s/s0);     
     /*******************************************************/
@@ -296,7 +194,7 @@ double KerForward(double *x,double *par)
     /*******************************************************/
     //Eikonal - imaginary part
     /*******************************************************/    
-    double ImChiEvenSH=0.5*Kf*(ReWSh*imsig+ImWSh*resig);
+    double ImChiEvenSH=0.5*Kf*WSh*imsig;
     /*******************************************************/
     double ImChiEvenSoft=0.5*WEvS*((B*Sin(PiOver4())/Sqrt(s/s0))-C*Power(s/s0,Delta)*Sin(Delta*PiOver2()));
     /*******************************************************/
@@ -341,12 +239,12 @@ double KerForward(double *x,double *par)
 /*******************************************************************************/
 // Plotando a seção de choque total pp e pbp
 /*******************************************************************************/
-void PlotTotXSec(double *Wcm,double *sigtotPPCT14,double *sigtotPBARPCT14,int npfit)
+void PlotTotXSec(double *Wcm,double *sigtotPPMMHT,double *sigtotPBARPMMHT,int npfit)
 {
     FILE *aq1,*aq2;
 // Plotting St data     
     aq1 = fopen("paw_Stpa.dat","r");
-    aq2 = fopen("paw_StppT.dat","r");
+    aq2 = fopen("paw_StppTA.dat","r");
 
     // pbp
     const int npdpa = npSap;
@@ -415,17 +313,17 @@ void PlotTotXSec(double *Wcm,double *sigtotPPCT14,double *sigtotPBARPCT14,int np
       gr1->SetMarkerSize(1.2);
       gr1->Draw("pz");         
       
-      TGraph *grSigPP_CT14 = new TGraph(npfit,Wcm,sigtotPPCT14);
-      grSigPP_CT14->SetLineColor(2);
-      grSigPP_CT14->SetLineWidth(1);
-      grSigPP_CT14->SetLineStyle(1);
-      grSigPP_CT14->Draw("c"); 
+      TGraph *grSigPP_MMHT = new TGraph(npfit,Wcm,sigtotPPMMHT);
+      grSigPP_MMHT->SetLineColor(2);
+      grSigPP_MMHT->SetLineWidth(1);
+      grSigPP_MMHT->SetLineStyle(1);
+      grSigPP_MMHT->Draw("c"); 
       
-      TGraph *grSigPBARP_CT14 = new TGraph(npfit,Wcm,sigtotPBARPCT14);
-      grSigPBARP_CT14->SetLineColor(2);
-      grSigPBARP_CT14->SetLineWidth(1);
-      grSigPBARP_CT14->SetLineStyle(2);
-      grSigPBARP_CT14->Draw("c"); 
+      TGraph *grSigPBARP_MMHT = new TGraph(npfit,Wcm,sigtotPBARPMMHT);
+      grSigPBARP_MMHT->SetLineColor(2);
+      grSigPBARP_MMHT->SetLineWidth(1);
+      grSigPBARP_MMHT->SetLineStyle(2);
+      grSigPBARP_MMHT->Draw("c"); 
            
       TLegend *leg1 = new TLegend(0.63,0.15,0.88,0.32);
       leg1->AddEntry(gr0,"#bar{p}p accelerator data ","p");
@@ -457,16 +355,16 @@ void PlotTotXSec(double *Wcm,double *sigtotPPCT14,double *sigtotPBARPCT14,int np
     gr1->GetYaxis()->SetTitleFont(42);
     gr1->GetXaxis()->SetRangeUser(xi,xf); 
     gr_cosmics->Draw("pz");
-    grSigPP_CT14->Draw("csame"); 
-    grSigPBARP_CT14->Draw("csame");
+    grSigPP_MMHT->Draw("csame"); 
+    grSigPBARP_MMHT->Draw("csame");
       
-      canv1->SaveAs("St_DGM19cCT14cut13_sATLAS.eps");    
+      canv1->SaveAs("St_DGM19cMMHTcut13_nu2.eps");    
 //       canv1->Clear();
 }
 /*******************************************************************************/
 // Plotando o parâmetro Rho pp e pbp
 /*******************************************************************************/
-void PlotRho(double *Wcm,double *rhoPPCT14,double *rhoPBARPCT14,int npfit)
+void PlotRho(double *Wcm,double *rhoPPMMHT,double *rhoPBARPMMHT,int npfit)
 {
     FILE *aq1,*aq2;   
 // Plotting rho data        
@@ -524,17 +422,17 @@ void PlotRho(double *Wcm,double *rhoPPCT14,double *rhoPBARPCT14,int npfit)
       gr11->SetTitle();
       gr11->Draw("pz"); 
       
-      TGraph *grRhoPP_CT14 = new TGraph(npfit,Wcm,rhoPPCT14);
-      grRhoPP_CT14->SetLineColor(2);
-      grRhoPP_CT14->SetLineWidth(1);
-      grRhoPP_CT14->SetLineStyle(1);
-      grRhoPP_CT14->Draw("c"); 
+      TGraph *grRhoPP_MMHT = new TGraph(npfit,Wcm,rhoPPMMHT);
+      grRhoPP_MMHT->SetLineColor(2);
+      grRhoPP_MMHT->SetLineWidth(1);
+      grRhoPP_MMHT->SetLineStyle(1);
+      grRhoPP_MMHT->Draw("c"); 
       
-      TGraph *grRhoPBARP_CT14 = new TGraph(npfit,Wcm,rhoPBARPCT14);
-      grRhoPBARP_CT14->SetLineColor(2);
-      grRhoPBARP_CT14->SetLineWidth(1);
-      grRhoPBARP_CT14->SetLineStyle(2);
-      grRhoPBARP_CT14->Draw("c");       
+      TGraph *grRhoPBARP_MMHT = new TGraph(npfit,Wcm,rhoPBARPMMHT);
+      grRhoPBARP_MMHT->SetLineColor(2);
+      grRhoPBARP_MMHT->SetLineWidth(1);
+      grRhoPBARP_MMHT->SetLineStyle(2);
+      grRhoPBARP_MMHT->Draw("c");       
      
       TLegend *leg2 = new TLegend(0.12,0.75,0.45,0.88);
       leg2->AddEntry(gr00,"#bar{p}p accelerator data ","p");
@@ -563,10 +461,10 @@ void PlotRho(double *Wcm,double *rhoPPCT14,double *rhoPBARPCT14,int npfit)
     gr11->GetXaxis()->SetLabelSize(0.06);
     gr11->GetYaxis()->SetTitleFont(42);
     gr11->GetXaxis()->SetRangeUser(xi,xf); 
-    grRhoPP_CT14->Draw("csame");
-    grRhoPBARP_CT14->Draw("csame");
+    grRhoPP_MMHT->Draw("csame");
+    grRhoPBARP_MMHT->Draw("csame");
            
-      canv2->SaveAs("Rh_DGM19cCT14cut13_sATLAS.eps");      
+      canv2->SaveAs("Rh_DGM19cMMHTcut13_nu2.eps");      
       canv2->Clear();
 }
 /***********************************************************************************************************/
@@ -580,7 +478,7 @@ void fcn(int &npar, double *gin, double &f, double *par, int iflag)
     double C=par[3];
     double D=par[4];
     double nu1=par[5];
-    double nu2=par[6]; 
+    double nu2=0.0;
     double Delta=0.12;        
     /*******************************************************/
     //reading data, then fitting
@@ -592,7 +490,7 @@ void fcn(int &npar, double *gin, double &f, double *par, int iflag)
  
     // pbp   
     aq1 = fopen("paw_Stpa.dat","r");
-    aq2 = fopen("paw_StppT.dat","r");
+    aq2 = fopen("paw_StppTA.dat","r");
 
     const int npdpa = npSap;
     double Wpap[npdpa],SigExpPaP[npdpa],uWpap[npdpa],uSigExpPaP[npdpa];
@@ -749,7 +647,7 @@ void fcn(int &npar, double *gin, double &f, double *par, int iflag)
 }
 /***********************************************************************************************************/
 
-void DGM19cCT14cut13_sATLAS()
+void DGM19cMMHTcut13_nu2()
 {
     /******************************************/
     //time control - start
@@ -762,7 +660,7 @@ void DGM19cCT14cut13_sATLAS()
     double arglist[numpar];
     int ierflg = 0;
   
-    arglist[0] = 8.18; //fitting with CL = 1\sigma
+    arglist[0] = 7.03; //fitting with CL = 1\sigma
     gMinuit->mnexcm("SET ERR",arglist,1,ierflg); 
       
     double vstart[numpar] = {
@@ -771,16 +669,15 @@ void DGM19cCT14cut13_sATLAS()
     41.6346,
     0.62000,
     24.1728,
-    2.29757000,
-    0.05414270}; //start values
-    double step[numpar] = {1.e-3,1.e-3,1.e-3,1.e-3,1.e-3,1.e-3,1.e-3}; //steps
+    2.29757000}; //start values
+    double step[numpar] = {1.e-3,1.e-3,1.e-3,1.e-3,1.e-3,1.e-3}; //steps
     gMinuit->mnparm(0, "MuSoft", vstart[0], step[0], 0.7,0.9,ierflg);
     gMinuit->mnparm(1, "A", vstart[1],   step[1], 0,0,ierflg);
     gMinuit->mnparm(2, "B", vstart[2],   step[2], 0,0,ierflg);
     gMinuit->mnparm(3, "C", vstart[3],   step[3], 0,0,ierflg);
     gMinuit->mnparm(4, "D", vstart[4],   step[4], 0,0,ierflg);
     gMinuit->mnparm(5, "Nu1", vstart[5], step[5], 0,0,ierflg);
-    gMinuit->mnparm(6, "Nu2", vstart[6], step[6], 0,0,ierflg);
+//    gMinuit->mnparm(6, "Nu2", vstart[6], step[6], 0,0,ierflg);
     
     
     //start minimizing data
@@ -839,8 +736,8 @@ void DGM19cCT14cut13_sATLAS()
     double C=outpar[3];
     double D=outpar[4];
     double nu1=outpar[5];
-    double nu2=outpar[6];
-    double Delta=0.12;         
+    double nu2=0.;   
+    double Delta=0.12;        
     /*******************************************************/
     //Total XSection - pp
        
@@ -898,14 +795,15 @@ void DGM19cCT14cut13_sATLAS()
     RhoPBARP.SetParameter(7,Delta);
     RhoPBARP.SetParameter(8,2);
     RhoPBARP.SetParameter(9,2);   
-    /*************************************************************************************************/
+    /*******************************************************/      
+/*************************************************************************************************/
    //calculates total xsection and rho, creating files to make the plots
     FILE *aq1,*aq2,*aq3,*aq4;
    
-    aq1=fopen("Stpp_DGM19cCT14cut13_sATLAS.dat","w"); 
-    aq2=fopen("Rhpp_DGM19cCT14cut13_sATLAS.dat","w"); 
-    aq3=fopen("Stpa_DGM19cCT14cut13_sATLAS.dat","w"); 
-    aq4=fopen("Rhpa_DGM19cCT14cut13_sATLAS.dat","w");  
+    aq1=fopen("Stpp_DGM19cMMHTcut13_nu2.dat","w"); 
+    aq2=fopen("Rhpp_DGM19cMMHTcut13_nu2.dat","w"); 
+    aq3=fopen("Stpa_DGM19cMMHTcut13_nu2.dat","w"); 
+    aq4=fopen("Rhpa_DGM19cMMHTcut13_nu2.dat","w");  
        
      //number of directive computing for GaussLegendreIntegration
     int np = 50;
@@ -950,19 +848,19 @@ void DGM19cCT14cut13_sATLAS()
       fclose(aq3);
       fclose(aq4);  
        
-      aq1 = fopen("Stpp_DGM19cCT14cut13_sATLAS.dat","r");
-      aq2 = fopen("Rhpp_DGM19cCT14cut13_sATLAS.dat","r");
-      aq3 = fopen("Stpa_DGM19cCT14cut13_sATLAS.dat","r");
-      aq4 = fopen("Rhpa_DGM19cCT14cut13_sATLAS.dat","r");
+      aq1 = fopen("Stpp_DGM19cMMHTcut13_nu2.dat","r");
+      aq2 = fopen("Rhpp_DGM19cMMHTcut13_nu2.dat","r");
+      aq3 = fopen("Stpa_DGM19cMMHTcut13_nu2.dat","r");
+      aq4 = fopen("Rhpa_DGM19cMMHTcut13_nu2.dat","r");
       
       const int npfit=108;
-      double Wcm[npfit],sigtotPPCT14[npfit],rhoPPCT14[npfit],sigtotPBARPCT14[npfit],rhoPBARPCT14[npfit];       
+      double Wcm[npfit],sigtotPPMMHT[npfit],rhoPPMMHT[npfit],sigtotPBARPMMHT[npfit],rhoPBARPMMHT[npfit];       
             
       for(int j=0;j<npfit;j++){
-          fscanf(aq1,"%lg %lg",&Wcm[j],&sigtotPPCT14[j]);
-          fscanf(aq2,"%lg %lg",&Wcm[j],&rhoPPCT14[j]);
-          fscanf(aq3,"%lg %lg",&Wcm[j],&sigtotPBARPCT14[j]);
-          fscanf(aq4,"%lg %lg",&Wcm[j],&rhoPBARPCT14[j]);
+          fscanf(aq1,"%lg %lg",&Wcm[j],&sigtotPPMMHT[j]);
+          fscanf(aq2,"%lg %lg",&Wcm[j],&rhoPPMMHT[j]);
+          fscanf(aq3,"%lg %lg",&Wcm[j],&sigtotPBARPMMHT[j]);
+          fscanf(aq4,"%lg %lg",&Wcm[j],&rhoPBARPMMHT[j]);
       }
       
       fclose(aq1);
@@ -972,10 +870,10 @@ void DGM19cCT14cut13_sATLAS()
        
     /************************************************************************************************/
     //Plotting total xsection data         
-    PlotTotXSec(Wcm,sigtotPPCT14,sigtotPBARPCT14,npfit);      
+    PlotTotXSec(Wcm,sigtotPPMMHT,sigtotPBARPMMHT,npfit);      
     /************************************************************************************************/
     //Plotting rho data     
-     PlotRho(Wcm,rhoPPCT14,rhoPBARPCT14,npfit);     
+     PlotRho(Wcm,rhoPPMMHT,rhoPBARPMMHT,npfit);     
       
     /******************************************/
     auto stop = high_resolution_clock::now(); 

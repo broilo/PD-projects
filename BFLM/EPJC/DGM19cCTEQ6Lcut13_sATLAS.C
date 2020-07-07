@@ -5,31 +5,26 @@ c O FATOR DE FORMA ESTÁ SENDO CONSIDERADO NA RDD!!!
 c
 c ImXsh é obtida via s->-is
 c
-c Foi retirado do conjunto de dados os pontos de StRh(8e13TeV)
-c
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 c
 c Gera St e Rh
 c
-c Obs1: Os fatores de forma K3(x) estão sendo obtidos via integração
-c por Regra de Simpson modificada
+c Obs1: Utiliza os novos conjuntos de dados do LHC
 c
-c Obs2: Utiliza os novos conjuntos de dados do LHC
+c Obs2: TOTEM
 c
-c Obs3: TOTEM + ATLAS
+c Obs3: Usa uma parametrização para SigQCD com 10 parâmetros livres
 c
-c Obs4: Usa uma parametrização para SigQCD com 10 parâmetros livres
+c Obs4: PDF: CTEQ6Llo
 c
-c Obs5: PDF: CTEQ6Llo
+c Obs5: Usa a estrutura do Durand & Pi
 c
-c Obs6: Usa a estrutura do Durand & Pi
+c Obs6: SigQCD(s) foi parametrizada por uma função complexa
 c
-c Obs7: SigQCD(s) foi parametrizada por uma função complexa
-c
-c Obs8: A parte soft da eiconal é composta por termos Xqq e Xqg, conforme
+c Obs7: A parte soft da eiconal é composta por termos Xqq e Xqg, conforme
 c o DGM antigo, só que com uma potência de s.
 c
-c Obs9: mu^{-}=0.5 está fixo.
+c Obs8: mu^{-}=0.5 está fixo.
 c
 c--------------------------------------------
 c Importante: s_{0}=25 GeV^{2} !4*m^{2}_{p} GeV^{2}
@@ -351,7 +346,7 @@ void PlotTotXSec(double *Wcm,double *sigtotPPCTEQ6L,double *sigtotPBARPCTEQ6L,in
     FILE *aq1,*aq2;
 // Plotting St data     
     aq1 = fopen("paw_Stpa.dat","r");
-    aq2 = fopen("paw_Stpp.dat","r");
+    aq2 = fopen("paw_StppT.dat","r");
 
     // pbp
     const int npdpa = npSap;
@@ -597,7 +592,7 @@ void fcn(int &npar, double *gin, double &f, double *par, int iflag)
  
     // pbp   
     aq1 = fopen("paw_Stpa.dat","r");
-    aq2 = fopen("paw_Stpp.dat","r");
+    aq2 = fopen("paw_StppT.dat","r");
 
     const int npdpa = npSap;
     double Wpap[npdpa],SigExpPaP[npdpa],uWpap[npdpa],uSigExpPaP[npdpa];
