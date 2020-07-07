@@ -1,0 +1,37 @@
+******************     REPORT EPJC2019    ***********************************************
+
+"Referee: 1
+Comments to the Author
+Authors consider the possibility to describe the available (at \sqrt(s)>10 GeV and/or > 5 GeV)
+forward data on \sigma_{tot} and \rho=Re/Im ratio within the QCD inspired model which includes 
+the minijet production and the 'soft' component but do not have the Odderon contribution. 
+For the QCD part they use three different sets of parton distributions and get in each case a 
+rather good results. However each time the tension with the TOTEM 13 TeV data was observed.
+The model gives sigma_{tot} a bit smaller and \rho a bit larger than the values claimed by TOTEM.
+This may indicate the necessity to include a C-odd (Odderon) high energy amplitude.
+
+I recommend the publication of EPJC-19-10-080 manuscript but after the revision.
+
+1. sect 4,A -- we can not use 4 TOTEM 8 TeV values of \sigma_{tot} shown in Table I as an independent 
+data points with their error bars (the same for 2 TOTEM points at 13 TeV). These values were extracted 
+from the same set of d\sigma_{el}/dt data. Either author have to choose the best (from their point of 
+view) result or to include all four 8 TeV points keeping the correct statistical weight; that is they have
+to enlarge twice (\sqrt(4)) the error bars for each point."
+
+******************  REPORT NPA2017 ************************************************************
+
+Reviewer #1: Recent TOTEM and ATLAS/ALFA data on total pp cross  sections at 7 and 8 TeV plus
+the TOTEM data on Re/Im ratio were included into the fit of elastic scattering amplitude in order 
+to check the consistency of these data with the lower energy measurements and to improve accuracy 
+of the high energy predictions.
+
+This is an interesting study and I recommend the publication of the manuscript but
+not in its present form. The revision is needed.
+
+1. We can not consider different TOTEM points, such as $\sigma_{tot}=101.5 and 101.9$  
+or 102.9 and 103.0 at 8 TeV and, may  be (this is not so clear), 98.6, 98.0 and 99.1 at 7 TeV) 
+as the statistically independent  results. Actually this were a bit different analysis of the 
+same data set. I would include such points into the fit with a lower statistical weight, say, 
+50% for  101.5 and 101.9 or 102.9 and 103.0 pairs.
+
+************************************************************************************************
