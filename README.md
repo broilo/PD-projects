@@ -21,7 +21,7 @@ COMPETE Collaboration but show agreement with the maximal Odderon dominance, as 
 models in the literature. We conclude that, within the experimental and theoretical uncertainties and both ensembles, the general model and three particular cases are not able to describe the σ tot and ρ data at 13 TeV simultaneously. However, if the discrepancies between the TOTEM and ATLAS data are not resolved,
 one Pomeron model, associated with double and triple poles and with only 7 free parameters, seems not to be excluded by the complete set of experimental information presently available.
 
-Codes related are in folder: .../BFLM/PRD
+Codes related are in folder: .../BFLM/EPJC
 
 (3) "Model of diffractive excitation in pp collisions at high energies" published in the PHYSICAL REVIEW D 101, 074034 (2020), DOI: 10.1103/PhysRevD.101.074034.
 
