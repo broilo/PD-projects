@@ -5,7 +5,7 @@ This repository takes into account the projects performed during my Post-Doctora
 
 Here you will find some codes related to the papers:
 
-(1) "Proton-proton forward scattering at the LHC" #teste
+(1) "Proton-proton forward scattering at the LHC"
 
 Abstract: Recently the TOTEM experiment at the LHC has released measurements at s = 13 TeV of the proton-proton total cross section, σ tot , and the ratio of the real to imaginary parts of the forward elastic amplitude, ρ . Since then an intense debate on the C -parity asymptotic nature of the scattering amplitude
 was initiated. We examine the proton-proton and the antiproton-proton forward data above 10 GeV in the context of an eikonal QCD-based model, where nonperturbative effects are readily included via a QCD effective charge. We show that, despite an overall satisfactory description of the forward data is
