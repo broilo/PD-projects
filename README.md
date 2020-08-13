@@ -50,7 +50,9 @@ Codes related are in folder: .../BSG/PRD
 
 ### (4) *"Investigating the impact of the partonic structure on the description of hadronic collisions at high energies"*
 
-Submitted to the Int. J. Mod. Phys. A (IJMPA).
+Published in Int.J.Mod.Phys.A 35 (2020) 22, 2050127
+
+DOI: https://doi.org/10.1142/S0217751X20501274
 
 Abstract: The impact of the partonic structure on the description of the hadronic cross sections is investi-gated considering a multi-channel eikonal model based on the Good – Walker approach. The total,elastic and single diffractive cross sections are estimated considering different parametrizations forthe parton distribution functions and the predictions are compared with the experimental datafor proton-proton (pp) and antiproton-proton ( ̄pp) collisions. We show that the description of thehigh-energy behavior of the hadronic cross sections is sensitive to the partonic structure.
 
